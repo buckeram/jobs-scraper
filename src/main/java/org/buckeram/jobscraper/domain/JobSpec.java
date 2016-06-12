@@ -1,14 +1,17 @@
 package org.buckeram.jobscraper.domain;
 
-import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import java.net.URL;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Details of a Job
  */
-@Builder
+@Data
+@NoArgsConstructor
 public class JobSpec
 {
     /**
@@ -32,18 +35,13 @@ public class JobSpec
      */
     private String employer;
     /**
-     * True if the job is full-time, false otherwise
-     */
-    private boolean fullTime;
-    /**
-     * Employment type; e.g. "Permanent", "Contract"
-     * TODO maybe this could be a boolean
+     * Employment type; e.g. "Permanent full-time", "Contract"
      */
     private String type;
     /**
      * Locations for which the job is advertised; e.g. "Clare", "Limerick", "Tipperary"
      */
-    private Set<String> locations;
+    private Set<String> locations = new HashSet<>();
     /**
      * Date on which the job advert was last updated
      */

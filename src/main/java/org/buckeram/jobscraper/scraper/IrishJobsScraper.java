@@ -5,12 +5,20 @@ import lombok.RequiredArgsConstructor;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.buckeram.jobscraper.Configuration;
+import org.buckeram.jobscraper.domain.JobSpec;
 import org.buckeram.jobscraper.domain.SearchResults;
+import org.buckeram.jobscraper.parser.IrishJobsJobSpecParser;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -27,17 +35,17 @@ public class IrishJobsScraper
 
     public void scrape() throws IOException
     {
-        final Set<URL> jobLinks = getJobLinks();
-
+        final Set<URL> jobLinks = getJobLinks(this.configuration.getUrl(), this.configuration.getTimeout());
+        final Set<JobSpec> jobSpecs = getJobSpecs(jobLinks);
     }
 
-    private Set<URL> getJobLinks() throws IOException
+    private Set<URL> getJobLinks(final URL url, final int timeout) throws IOException
     {
-        Optional<URL> next = Optional.of(this.configuration.getUrl());
-        final Set<URL> result = Collections.emptySet();
+        Optional<URL> next = Optional.of(url);
+        final Set<URL> result = new HashSet<>();
         while (next.isPresent())
         {
-            final Document doc = Jsoup.parse(next.get(), this.configuration.getTimeout());
+            final Document doc = Jsoup.parse(next.get(), timeout);
             final SearchResults searchResults = parseSearchResults(doc);
             result.addAll(searchResults.getJobLinks());
             next = searchResults.getNextPage();
@@ -65,4 +73,33 @@ public class IrishJobsScraper
 
         return results;
     }
+
+    private Set<JobSpec> getJobSpecs(final Set<URL> jobLinks)
+    {
+        final Set<JobSpec> result = new HashSet<>();
+
+        final ExecutorService executorService = Executors.newFixedThreadPool(10);
+        final List<Future<JobSpec>> futures = new ArrayList<>(jobLinks.size());
+        jobLinks.forEach(jobLink -> {
+            final Future<JobSpec> future = executorService.submit(new IrishJobsJobSpecParser(
+                    jobLink,
+                    this.configuration.getTimeout()));
+            futures.add(future);
+        });
+
+        for (final Future<JobSpec> future: futures)
+        {
+            try
+            {
+                result.add(future.get());
+            }
+            catch (InterruptedException | ExecutionException e)
+            {
+                e.printStackTrace();
+            }
+        }
+
+        return result;
+    }
+
 }
