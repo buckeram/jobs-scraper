@@ -18,6 +18,7 @@ import java.util.concurrent.Future;
 import org.buckeram.jobscraper.Configuration;
 import org.buckeram.jobscraper.domain.JobSpec;
 import org.buckeram.jobscraper.domain.SearchResults;
+import org.buckeram.jobscraper.output.JobSpecWriter;
 import org.buckeram.jobscraper.parser.IrishJobsJobSpecParser;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -32,11 +33,14 @@ public class IrishJobsScraper
 {
     @NonNull
     private Configuration configuration;
+    @NonNull
+    private JobSpecWriter processor;
 
     public void scrape() throws IOException
     {
         final Set<URL> jobLinks = getJobLinks(this.configuration.getUrl(), this.configuration.getTimeout());
         final Set<JobSpec> jobSpecs = getJobSpecs(jobLinks);
+        this.processor.process(jobSpecs);
     }
 
     private Set<URL> getJobLinks(final URL url, final int timeout) throws IOException
@@ -78,7 +82,7 @@ public class IrishJobsScraper
     {
         final Set<JobSpec> result = new HashSet<>();
 
-        final ExecutorService executorService = Executors.newFixedThreadPool(10);
+        final ExecutorService executorService = Executors.newFixedThreadPool(8);
         final List<Future<JobSpec>> futures = new ArrayList<>(jobLinks.size());
         jobLinks.forEach(jobLink -> {
             final Future<JobSpec> future = executorService.submit(new IrishJobsJobSpecParser(
@@ -98,6 +102,7 @@ public class IrishJobsScraper
                 e.printStackTrace();
             }
         }
+        executorService.shutdown();
 
         return result;
     }

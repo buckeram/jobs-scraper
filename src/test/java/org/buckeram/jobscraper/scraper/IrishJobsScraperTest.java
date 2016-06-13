@@ -11,9 +11,7 @@ import org.jsoup.nodes.Document;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  *
@@ -27,7 +25,7 @@ public class IrishJobsScraperTest
     {
         final Configuration configuration = new Configuration();
         configuration.setUrl(this.getClass().getClassLoader().getResource("irishjobs.ie.html"));
-        this.scraper = new IrishJobsScraper(configuration);
+        this.scraper = new IrishJobsScraper(configuration, jobSpecs -> { /* do no processing. */ });
     }
 
     @Test

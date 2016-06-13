@@ -44,7 +44,7 @@ public class Configuration
         }
         catch (MalformedURLException e)
         {
-            throw new ConfigurationException(e);
+            throw new ConfigurationException("System Property jobscraper.url must be set to a valid URL", e);
         }
     }
 

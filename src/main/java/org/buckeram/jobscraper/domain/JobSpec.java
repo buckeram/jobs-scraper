@@ -1,7 +1,8 @@
 package org.buckeram.jobscraper.domain;
 
+import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Singular;
 import java.net.URL;
 import java.util.Date;
 import java.util.HashSet;
@@ -11,7 +12,8 @@ import java.util.Set;
  * Details of a Job
  */
 @Data
-@NoArgsConstructor
+@Builder
+
 public class JobSpec
 {
     /**
@@ -41,6 +43,7 @@ public class JobSpec
     /**
      * Locations for which the job is advertised; e.g. "Clare", "Limerick", "Tipperary"
      */
+    @Singular
     private Set<String> locations = new HashSet<>();
     /**
      * Date on which the job advert was last updated

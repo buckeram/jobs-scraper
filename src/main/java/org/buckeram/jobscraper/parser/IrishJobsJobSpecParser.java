@@ -23,7 +23,7 @@ import org.jsoup.nodes.Element;
 @RequiredArgsConstructor
 public class IrishJobsJobSpecParser implements Callable<JobSpec>
 {
-    public static DateFormat dateFormat = new SimpleDateFormat("'Updated 'dd/MM/yyyy");
+    public static final DateFormat DATE_FORMAT = new SimpleDateFormat("'Updated 'dd/MM/yyyy");
 
     @NonNull
     private final URL jobLink;
@@ -38,16 +38,17 @@ public class IrishJobsJobSpecParser implements Callable<JobSpec>
 
     public JobSpec parseJobSpec(final Document doc)
     {
-        final JobSpec jobSpec = new JobSpec();
-        jobSpec.setUrl(this.jobLink);
-        jobSpec.setTitle(extractTitle(doc));
-        jobSpec.setLocations(extractLocations(doc));
-        jobSpec.setDescription(extractDescription(doc));
-        jobSpec.setEmployer(extractEmployer(doc));
-        jobSpec.setSalary(extractSalary(doc));
-        jobSpec.setType(extractType(doc));
-        jobSpec.setLastUpdated(extractLastUpdatedDate(doc));
-        return jobSpec;
+        return JobSpec.builder()
+                .url(this.jobLink)
+                .title(extractTitle(doc))
+                .locations(extractLocations(doc))
+                .description(extractDescription(doc))
+                .employer(extractEmployer(doc))
+                .salary(extractSalary(doc))
+                .type(extractType(doc))
+                .lastUpdated(extractLastUpdatedDate(doc))
+                .build();
+
     }
 
     private String extractTitle(final Document doc)
@@ -92,12 +93,9 @@ public class IrishJobsJobSpecParser implements Callable<JobSpec>
         Date result = null;
         try
         {
-            result = dateFormat.parse(selectText(doc, "ul.job-overview > li.updated-time:not([style])"));
+            result = DATE_FORMAT.parse(selectText(doc, "ul.job-overview > li.updated-time:not([style])"));
         }
-        catch (ParseException e)
-        {
-            e.printStackTrace();
-        }
+        catch (ParseException ignore) { }
 
         return result;
     }
