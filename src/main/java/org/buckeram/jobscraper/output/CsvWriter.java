@@ -25,7 +25,7 @@ public class CsvWriter implements JobSpecWriter
         URL, TITLE, DESCRIPTION, LOCATIONS, SALARY, TYPE, EMPLOYER, LAST_UPDATED
     }
 
-    private static final CSVFormat FORMAT = CSVFormat.DEFAULT.withHeader(Header.class);
+    private static final CSVFormat FORMAT = CSVFormat.TDF.withHeader(Header.class);
 
     @NonNull
     private Appendable out;
@@ -44,7 +44,8 @@ public class CsvWriter implements JobSpecWriter
                 csv.print(jobSpec.getSalary());
                 csv.print(jobSpec.getType());
                 csv.print(jobSpec.getEmployer());
-                csv.print(DATE_FORMAT.format(jobSpec.getLastUpdated()));
+                final String lastUpdated = jobSpec.getLastUpdated() != null ? DATE_FORMAT.format(jobSpec.getLastUpdated()) : "";
+                csv.print(lastUpdated);
                 csv.println();
             }
         }

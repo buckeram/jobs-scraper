@@ -95,7 +95,7 @@ public class IrishJobsJobSpecParser implements Callable<JobSpec>
         {
             result = DATE_FORMAT.parse(selectText(doc, "ul.job-overview > li.updated-time:not([style])"));
         }
-        catch (ParseException ignore) { }
+        catch (NumberFormatException | ParseException ignore) { }
 
         return result;
     }
