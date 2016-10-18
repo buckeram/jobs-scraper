@@ -29,7 +29,8 @@ public class CsvWriterTest
     private static final String LOCATION1 = "E-Town til I die";
     private static final String LOCATION2 = "Tracy Island";
 
-    private static final String HEADER_STRING = String.join(",", CsvWriter.getHeader());
+    private static final String SEP = "\t";
+    private static final String HEADER_STRING = String.join(SEP, CsvWriter.getHeader());
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yyyy");
 
     private StringWriter stringWriter;
@@ -110,11 +111,11 @@ public class CsvWriterTest
 
     private String expectedRow(final JobSpec jobSpec)
     {
-        return new StringJoiner(",")
+        return new StringJoiner(SEP)
                 .add(jobSpec.getUrl().toString())
                 .add(jobSpec.getTitle())
                 .add(jobSpec.getDescription())
-                .add('"' + jobSpec.getLocations().toString() + '"')
+                .add(jobSpec.getLocations().toString())
                 .add(jobSpec.getSalary())
                 .add(jobSpec.getType())
                 .add(jobSpec.getEmployer())

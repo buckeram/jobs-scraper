@@ -13,3 +13,7 @@ target/
 *.iws
 *.iml
 
+# outputs
+*.tsv
+*.csv
+

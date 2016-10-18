@@ -32,7 +32,7 @@
                     <systemProperties>
                         <systemProperty>
                             <key>jobscraper.url</key>
-                            <value>http://www.irishjobs.ie/ShowResults.aspx?Keywords=java&amp;Location=45&amp;PerPage=100</value>
+                            <value>http://www.irishjobs.ie/ShowResults.aspx?Keywords=software&amp;Location=0&amp;PerPage=100</value>
                         </systemProperty>
                     </systemProperties>
                 </configuration>
